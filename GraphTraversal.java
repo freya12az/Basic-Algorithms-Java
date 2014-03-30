@@ -6,10 +6,13 @@ public class GraphTraversal{
   Node root;
   Graph g;
   Boolean[] visited;
+  Boolean[] visitedbfs;
   
   public GraphTraversal(int size){
       visited = new Boolean[size];
+      visitedbfs = new Boolean[size];
       Arrays.fill(visited, false);
+      Arrays.fill(visitedbfs, false);
       root = new Node(0);
       g = new Graph(size, root);
       g.addEdge(0,1);
@@ -53,8 +56,16 @@ public class GraphTraversal{
       this.edges[i].add(j);
     }
     
-    List<Integer> getAdjNodes(Node n){
+    List<Integer> getAdjNodesValues(Node n){
       return edges[n.value];
+    }
+    
+    List<Node> getAdjNodes(Node n){
+      List<Node> nodes = new ArrayList<Node>();
+      for(Integer e : edges[n.value]){
+        nodes.add(this.nodes[e]);
+      }
+      return nodes;
     }
     
   }
@@ -67,7 +78,7 @@ public class GraphTraversal{
     
     visited[r.value] = true;
     System.out.println("visited node \t"+r.value);  
-    List<Integer> adj = g.getAdjNodes(r);
+    List<Integer> adj = g.getAdjNodesValues(r);
     System.out.format("Adj nodes for node:%d are:\n",r.value);
     Iterator i = adj.listIterator(0);
     while(i.hasNext()){
@@ -78,9 +89,30 @@ public class GraphTraversal{
     }
   }
     
+  public void bfs(Node r){
+    System.out.println("Starting BFS");
+    Queue<Node> q = new LinkedList<Node>();
+    visitedbfs[r.value] = true;
+    System.out.println("Visited root node:"+r.value);
+    q.add(r); //add root
+    
+    while(!q.isEmpty()){
+      Node n = q.remove();
+      List<Node> adj = g.getAdjNodes(n);
+      for( Node node : adj ){
+        if(visitedbfs[node.value]==false){
+          visitedbfs[node.value]=true;
+          System.out.println("visited node:"+node.value);
+          q.add(node);
+        }
+      }
+    }
+  }
+  
     public static void main(String[] args){
       GraphTraversal gt = new GraphTraversal(6);      
       gt.dfs(gt.root);
+      gt.bfs(gt.root);
     }
     
   }
